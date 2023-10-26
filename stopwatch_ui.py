@@ -1,7 +1,21 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 from datetime import datetime, timedelta
 from stopwatch import Stopwatch
+
+# Function to read the time dialog interval from a file
+def read_dialog_interval():
+    try:
+        with open("dialog_interval.txt", "r") as file:
+            return int(file.read())
+    except (FileNotFoundError, ValueError):
+        return 3  # Default value if the file doesn't exist or is invalid
+
+# Function to save the time dialog interval to a file
+def save_dialog_interval(interval):
+    with open("dialog_interval.txt", "w") as file:
+        file.write(str(interval))
+    messagebox.showinfo("Save Successful", "Dialog interval saved successfully!")
 
 class StopwatchUI:
     def __init__(self, window):
@@ -15,6 +29,7 @@ class StopwatchUI:
     def create_ui(self):
         self.create_labels()
         self.create_buttons()
+        self.create_textfield()
         self.update_time()
 
     def create_labels(self):
@@ -33,6 +48,14 @@ class StopwatchUI:
         pause_button.pack()
         restart_button.pack()
 
+    def create_textfield(self):
+        dialog_interval_label = tk.Label(self.window, text="Dialog Interval (minutes):", font=("Arial", 12))
+        dialog_interval_label.pack()
+        self.dialog_interval_entry = tk.Entry(self.window, font=("Arial", 12))
+        self.dialog_interval_entry.insert(0, read_dialog_interval())
+        self.dialog_interval_entry.pack()
+        self.dialog_interval_entry.bind("<Return>", self.save_interval)
+
     def start_stopwatch(self):
         self.stopwatch.start()
         self.update_time()
@@ -50,8 +73,9 @@ class StopwatchUI:
                 self.update_time()
 
     def check_resume_timer(self):
+        interval = read_dialog_interval()
         if not self.stopwatch.running and self.stopwatch.paused and (
-            not self.last_dialog_time or (datetime.now() - self.last_dialog_time).total_seconds() >= 2
+            not self.last_dialog_time or (datetime.now() - self.last_dialog_time).total_seconds() >= interval * 60
         ):
             response = messagebox.askyesno("Resume Stopwatch", "Do you want to resume the stopwatch?")
             if response:
@@ -87,3 +111,10 @@ class StopwatchUI:
         hours, remainder = divmod(total_seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
         return f"{hours:02}:{minutes:02}:{seconds:02}"
+
+    def save_interval(self, event):
+        try:
+            interval = int(self.dialog_interval_entry.get())
+            save_dialog_interval(interval)
+        except ValueError:
+            messagebox.showerror("Invalid Input", "Please enter a valid integer for the interval.")
