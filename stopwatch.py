@@ -2,27 +2,31 @@ from datetime import datetime, timedelta
 
 class Stopwatch:
     def __init__(self):
-        self.start_time = None
-        self.stop_time = None
+        self.start_times = []
+        self.stop_times = []
         self.running = False
+        self.paused = False  # Add a 'paused' attribute
 
     def start(self):
-        self.start_time = datetime.now()
-        self.running = True
+        if not self.running:
+            self.start_times.append(datetime.now())
+            self.running = True
+            self.paused = False  # Reset 'paused' when starting
 
-    def stop(self):
-        self.stop_time = datetime.now()
-        self.running = False
+    def pause(self):
+        if self.running:
+            self.stop_times.append(datetime.now())
+            self.running = False
+            self.paused = True  # Set 'paused' to True when pausing
 
     def reset(self):
-        self.start_time = None
-        self.stop_time = None
+        self.start_times = []
+        self.stop_times = []
         self.running = False
+        self.paused = False  # Reset 'paused' when resetting
 
-    def elapsed_time(self):
-        if self.running:
-            current_time = datetime.now()
-            elapsed_time = current_time - self.start_time
-        else:
-            elapsed_time = self.stop_time - self.start_time if self.start_time else timedelta()
-        return elapsed_time
+    def elapsed_times(self):
+        elapsed_times = []
+        for start_time, stop_time in zip(self.start_times, self.stop_times):
+            elapsed_times.append(stop_time - start_time)
+        return elapsed_times
