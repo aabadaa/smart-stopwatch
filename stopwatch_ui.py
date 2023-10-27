@@ -72,17 +72,21 @@ class StopwatchUI:
         self.update_time()
 
     def pause_stopwatch(self):
-        title = self.title_entry.get()
-        start_time = self.stopwatch.start_times[-1]
-        stop_time = datetime.now()
-        self.stopwatch.add_title(title, start_time, stop_time)
-        self.display_titles()  # Display the updated list of titles
-        self.stopwatch.pause()
-        self.update_time()
-        self.last_dialog_time = datetime.now()
+        if  self.stopwatch.running:
+             
+            title = self.title_entry.get()
+            start_time = self.stopwatch.start_times[-1]
+            stop_time = datetime.now()
+            self.stopwatch.add_title(title, start_time, stop_time)
+            self.display_titles()  # Display the updated list of titles
+            self.stopwatch.pause()
+            self.update_time()
+            self.last_dialog_time = datetime.now()
 
     def restart_stopwatch(self):
-        if self.stopwatch.running:
+        self.pause_stopwatch()
+        response = messagebox.askyesno("Confirm Restart", "Are you sure you want to restart the stopwatch?")
+        if response:
             self.stopwatch.reset()
             self.update_time()
 
