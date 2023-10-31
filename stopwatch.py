@@ -32,6 +32,16 @@ class Stopwatch:
             elapsed.append(stop - start)
         return elapsed
 
+    def calculate_total_elapsed(self):
+        current_time = datetime.now()
+        if self.running and self.start_times:
+            elapsed_time = current_time - self.start_times[-1]
+        else:
+            elapsed_time = timedelta(seconds=0)
+
+        total_elapsed = elapsed_time + sum(self.elapsed_times(), timedelta())
+        return total_elapsed
+
     def add_title(self, title, start_time, stop_time):
         self.titles.append((title, start_time, stop_time))
 

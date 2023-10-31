@@ -112,16 +112,10 @@ class StopwatchUI:
 
 
     def update_time(self):
-        current_time = datetime.now()
-        if self.stopwatch.running and self.stopwatch.start_times:
-            elapsed_time = current_time - self.stopwatch.start_times[-1]
-        else:
-            elapsed_time = timedelta(seconds=0)
-
-        total_elapsed = elapsed_time + sum(self.stopwatch.elapsed_times(), timedelta())
-        time_str = self.format_timedelta(total_elapsed)
-        self.time_label.config(text=time_str)
-        self.time_label.after(10, self.update_time)
+            total_elapsed = self.stopwatch.calculate_total_elapsed()
+            time_str = self.format_timedelta(total_elapsed)
+            self.time_label.config(text=time_str)
+            self.time_label.after(10, self.update_time)
 
     def format_datetime(self, dt_list):
         if not dt_list:
