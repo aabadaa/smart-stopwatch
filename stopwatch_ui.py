@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 from datetime import datetime, timedelta
+from saved_state_util import read_stopwatch_state, save_stopwatch_state
 from stopwatch import Stopwatch
 from fileUtils import *
 
@@ -11,8 +12,14 @@ class StopwatchUI:
         self.window.title("Stopwatch")
         self.stopwatch = Stopwatch()
         self.last_dialog_time = None
+        self.load_stopwatch_state()  # Load stopwatch state when the app starts
         self.create_ui()
+        self.display_titles() 
+
+        self.window.protocol("WM_DELETE_WINDOW", self.on_closing)  # Register the app closing event
         self.check_resume_timer()
+
+
 
     def create_ui(self):
         self.create_labels()
@@ -73,12 +80,11 @@ class StopwatchUI:
 
     def pause_stopwatch(self):
         if  self.stopwatch.running:
-            title = self.title_entry.get()
-            start_time = self.stopwatch.start_times[-1]
-            stop_time = datetime.now()
-            self.stopwatch.add_title(title, start_time, stop_time)
-            self.display_titles() 
             self.stopwatch.pause()
+
+            title = self.title_entry.get()
+            self.stopwatch.add_title(title)
+            self.display_titles() 
             self.update_time()
             self.last_dialog_time = datetime.now()
 
@@ -92,8 +98,9 @@ class StopwatchUI:
     def display_titles(self):
         self.text_list.delete(0, tk.END)  # Clear the existing list
         titles = self.stopwatch.get_titles()
-        for title, start, stop in titles:
+        for title, start, stop in zip(titles,self.stopwatch.start_times,self.stopwatch.stop_times):
             formatted_text = f"{title}: {self.format_datetime([start])} - {self.format_datetime([stop])}"
+            print(formatted_text)
             self.text_list.insert(tk.END, formatted_text)
 
     def check_resume_timer(self):
@@ -139,3 +146,18 @@ class StopwatchUI:
         except ValueError:
             messagebox.showerror("Invalid Input", "Please enter valid integers for minutes and seconds.")
 
+    def on_closing(self):
+        self.save_stopwatch_state()  # Save stopwatch state when the app is closed
+        self.window.destroy()
+        
+    def load_stopwatch_state(self):
+        try:
+            state = read_stopwatch_state()
+            if state:
+                self.stopwatch.from_state(state)
+        except FileNotFoundError:
+            pass
+
+    def save_stopwatch_state(self):
+        state = self.stopwatch.to_state()
+        save_stopwatch_state(state)

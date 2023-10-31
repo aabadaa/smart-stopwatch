@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+from saved_state_util import read_stopwatch_state, save_stopwatch_state
+
 class Stopwatch:
     def __init__(self):
         self.running = False
@@ -42,8 +44,24 @@ class Stopwatch:
         total_elapsed = elapsed_time + sum(self.elapsed_times(), timedelta())
         return total_elapsed
 
-    def add_title(self, title, start_time, stop_time):
-        self.titles.append((title, start_time, stop_time))
+    def add_title(self, title):
+        self.titles.append(title)
 
     def get_titles(self):
         return self.titles
+    def from_state(self, state):
+        self.running = state.get("running", False)
+        self.paused = state.get("paused", False)
+        self.start_times = [datetime.fromisoformat(ts) for ts in state.get("start_times", [])]
+        self.stop_times = [datetime.fromisoformat(ts) for ts in state.get("stop_times", [])]
+        self.titles = state.get("titles", [])
+
+    def to_state(self):
+        state = {
+            "running": self.running,
+            "paused": self.paused,
+            "start_times": [ts.isoformat() for ts in self.start_times],
+            "stop_times": [ts.isoformat() for ts in self.stop_times],
+            "titles": self.titles
+        }
+        return state
