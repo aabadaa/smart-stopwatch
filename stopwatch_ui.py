@@ -22,7 +22,7 @@ class StopwatchUI:
         self.update_time()
 
     def create_labels(self):
-        self.time_label = tk.Label(self.window, text="00:00:00", font=("Arial", 40))
+        self.time_label = tk.Label(self.window, text="00:00:00:00", font=("Arial", 40))
         self.time_label.pack()
 
     def create_buttons(self):
@@ -31,7 +31,7 @@ class StopwatchUI:
         restart_button = tk.Button(self.window, text="Restart", command=self.restart_stopwatch)
 
         title_label = tk.Label(self.window, text="Title:", font=("Arial", 12))
-        self.title_entry = tk.Entry(self.window, font=("Arial", 12))  # Add this line
+        self.title_entry = tk.Entry(self.window, font=("Arial", 12))  
         title_label.pack()
         self.title_entry.pack()
 
@@ -73,12 +73,11 @@ class StopwatchUI:
 
     def pause_stopwatch(self):
         if  self.stopwatch.running:
-             
             title = self.title_entry.get()
             start_time = self.stopwatch.start_times[-1]
             stop_time = datetime.now()
             self.stopwatch.add_title(title, start_time, stop_time)
-            self.display_titles()  # Display the updated list of titles
+            self.display_titles() 
             self.stopwatch.pause()
             self.update_time()
             self.last_dialog_time = datetime.now()
@@ -122,20 +121,22 @@ class StopwatchUI:
         total_elapsed = elapsed_time + sum(self.stopwatch.elapsed_times(), timedelta())
         time_str = self.format_timedelta(total_elapsed)
         self.time_label.config(text=time_str)
-        self.time_label.after(1000, self.update_time)
+        self.time_label.after(10, self.update_time)
 
     def format_datetime(self, dt_list):
         if not dt_list:
             return ""
-        return "\n".join([dt.strftime('%Y-%m-%d %I:%M:%S') for dt in dt_list])
+        return "\n".join([dt.strftime('%I:%M') for dt in dt_list])
 
     def format_timedelta(self, td):
         total_seconds = int(td.total_seconds())
         hours, remainder = divmod(total_seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
-        return f"{hours:02}:{minutes:02}:{seconds:02}"
+        milliseconds = int((td.microseconds + seconds * 10 ** 6) / 10 ** 4)
+        return f"{hours:02}:{minutes:02}:{seconds:02}:{milliseconds//10:02}"
 
-    def save_interval(self, event):
+
+    def save_interval(self, _):
         try:
             minutes = int(self.dialog_minutes_entry.get())
             seconds = int(self.dialog_seconds_entry.get())
