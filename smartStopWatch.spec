@@ -5,7 +5,7 @@ a = Analysis(
     ['smartStopWatch.py'],
     pathex=['D:\a projects\pyton\smart stop watch'],
     binaries=[],
-             datas=[('stopwatch.py', '.'), ('stopwatch_ui.py', '.'), ('fileUtils.py', '.')],
+             datas=[('stopwatch.py', '.'), ('stopwatch_ui.py', '.'), ('fileUtils.py', '.'), ('saved_state_util.py', '.')],
                  hiddenimports=[],
     hookspath=[],
     hooksconfig={},

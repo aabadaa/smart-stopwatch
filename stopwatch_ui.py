@@ -133,8 +133,9 @@ class StopwatchUI:
         total_seconds = int(td.total_seconds())
         hours, remainder = divmod(total_seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
-        milliseconds = int((td.microseconds + seconds * 10 ** 6) / 10 ** 4)
-        return f"{hours:02}:{minutes:02}:{seconds:02}:{milliseconds//10:02}"
+        _,milliseconds = divmod(int((td.microseconds + seconds * 10 ** 6) / 10 ** 4),100)
+        print(milliseconds)
+        return f"{hours:02}:{minutes:02}:{seconds:02}:{milliseconds:02}"
 
 
     def save_interval(self, _):
