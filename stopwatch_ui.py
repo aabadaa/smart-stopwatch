@@ -94,6 +94,7 @@ class StopwatchUI:
         if response:
             self.stopwatch.reset()
             self.update_time()
+            self.display_titles()
 
     def display_titles(self):
         self.text_list.delete(0, tk.END)  # Clear the existing list
@@ -148,6 +149,7 @@ class StopwatchUI:
             messagebox.showerror("Invalid Input", "Please enter valid integers for minutes and seconds.")
 
     def on_closing(self):
+        self.pause_stopwatch()
         self.save_stopwatch_state()  # Save stopwatch state when the app is closed
         self.window.destroy()
         

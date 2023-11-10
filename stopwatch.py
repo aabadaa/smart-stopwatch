@@ -26,7 +26,7 @@ class Stopwatch:
         self.paused = False
         self.start_times = []
         self.stop_times = []
-        self.titles = []  # Clear the titles when resetting
+        self.titles = []
 
     def elapsed_times(self):
         elapsed = []
