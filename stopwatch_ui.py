@@ -77,6 +77,8 @@ class StopwatchUI:
     def start_stopwatch(self):
         self.stopwatch.start()
         self.update_time()
+        self.save_stopwatch_state() 
+
 
     def pause_stopwatch(self):
         if  self.stopwatch.running:
@@ -87,6 +89,8 @@ class StopwatchUI:
             self.display_titles() 
             self.update_time()
             self.last_dialog_time = datetime.now()
+            self.save_stopwatch_state() 
+
 
     def restart_stopwatch(self):
         self.pause_stopwatch()
@@ -95,6 +99,8 @@ class StopwatchUI:
             self.stopwatch.reset()
             self.update_time()
             self.display_titles()
+            self.save_stopwatch_state() 
+
 
     def display_titles(self):
         self.text_list.delete(0, tk.END)  # Clear the existing list
@@ -150,7 +156,7 @@ class StopwatchUI:
 
     def on_closing(self):
         self.pause_stopwatch()
-        self.save_stopwatch_state()  # Save stopwatch state when the app is closed
+        self.save_stopwatch_state() 
         self.window.destroy()
         
     def load_stopwatch_state(self):
